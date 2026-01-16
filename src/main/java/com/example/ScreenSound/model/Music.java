@@ -13,9 +13,9 @@ public class Music {
 
     private String musicName;
 
-    private int musicDuration;
+    private double musicDuration;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "musicsArtists", joinColumns = @JoinColumn(name = "music_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
     private List<Artist> artists;
 
@@ -42,7 +42,7 @@ public class Music {
         return id;
     }
 
-    public int getMusicDuration() {
+    public double getMusicDuration() {
         return musicDuration;
     }
 

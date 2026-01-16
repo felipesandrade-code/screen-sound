@@ -1,9 +1,26 @@
 package com.example.ScreenSound;
 
+import com.example.ScreenSound.repository.ArtistRepository;
+import com.example.ScreenSound.repository.MusicRepository;
 import com.example.ScreenSound.service.ArtistService;
+import com.example.ScreenSound.service.GeminiSearch;
 import com.example.ScreenSound.service.MusicService;
+import jakarta.persistence.Column;
+import org.springframework.stereotype.Component;
 
+import java.util.Scanner;
+
+@Component
 public class Principal {
+    private Scanner inputScanner = new Scanner(System.in);
+    private final ArtistService artistService;
+    private final MusicService musicService;
+    private GeminiSearch geminiSearch;
+
+    public Principal(ArtistService artistService, MusicService musicService) {
+        this.artistService = artistService;
+        this.musicService = musicService;
+    }
 
     public void exibeMenu(){
         var menu = """
@@ -17,13 +34,12 @@ public class Principal {
                 
                 0 - sair  
                 """;
-        int opcao = -1;
-        MusicService musicService = new MusicService();
-        ArtistService artistService = new ArtistService();
+        int optionInput = -1;
 
-        while (opcao != 0) {
+        while (optionInput != 0) {
             System.out.println(menu);
-            switch (opcao){
+            optionInput = inputScanner.nextInt();
+            switch (optionInput){
                 case 1:
                     artistService.registerArtist();
                     break;

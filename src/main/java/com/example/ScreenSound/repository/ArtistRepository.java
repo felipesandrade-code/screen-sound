@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface ArtistRepository extends JpaRepository<Artist, Long> {
-    @Query("select all(a) from Artist a")
+    @Query("select a from Artist a")
     List<Artist> searchArtists();
     @Query("select a from Artist a where a.artistName = :name")
     Optional<Artist> searchArtistByName(@Param("name") String name);
@@ -20,5 +20,4 @@ public interface ArtistRepository extends JpaRepository<Artist, Long> {
     List<Artist> searchArtistsByBirthday(@Param("date") LocalDate date);
     @Query("select a from Music m JOIN m.artists a where m.musicName ilike %:music%")
     List<Artist> searchArtistsByMusic(String music);
-
 }

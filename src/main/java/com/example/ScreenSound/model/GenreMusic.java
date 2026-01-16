@@ -1,5 +1,6 @@
 package com.example.ScreenSound.model;
 
+
 public enum GenreMusic {
     SERTANEJO,
     POP,
@@ -10,5 +11,14 @@ public enum GenreMusic {
     MPB,
     RAP,
     BLUES,
-    JAZZ
+    JAZZ;
+
+    public static GenreMusic fromString(String text){
+        for(GenreMusic genreMusic: GenreMusic.values()){
+            if(genreMusic.name().equalsIgnoreCase(text.trim())){
+                return genreMusic;
+            }
+        }
+        throw new IllegalArgumentException("Any genre is found, please try again.");
+    }
 }

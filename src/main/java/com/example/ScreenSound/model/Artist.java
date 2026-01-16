@@ -1,6 +1,7 @@
 package com.example.ScreenSound.model;
 
 import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,6 +13,7 @@ public class Artist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name =  "artist_name")
     private String artistName;
 
     private LocalDate birthday;
@@ -20,9 +22,11 @@ public class Artist {
     private List<Music> musics;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "genre_music")
     private GenreMusic genreMusic;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "artist_type")
     private ArtistType artistType;
 
 
@@ -75,5 +79,10 @@ public class Artist {
 
     public void setTipoArtista(ArtistType artistType) {
         this.artistType = artistType;
+    }
+
+    @Override
+    public String toString() {
+        return this.artistName;
     }
 }

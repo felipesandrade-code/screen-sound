@@ -4,19 +4,25 @@ import com.example.ScreenSound.model.Artist;
 import com.example.ScreenSound.model.GenreMusic;
 import com.example.ScreenSound.model.ArtistType;
 import com.example.ScreenSound.repository.ArtistRepository;
-import dev.langchain4j.model.openai.OpenAiChatModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Scanner;
 
 @Service
 public class ArtistService {
-    private Artist artist;
-    private ArtistRepository artistRepository;
-    private Scanner inputUser = new Scanner(System.in);
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final ArtistRepository artistRepository;
+    private final Scanner inputUser = new Scanner(System.in);
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final GeminiSearch geminiSearch;
+
+    public ArtistService(ArtistRepository artistRepository, GeminiSearch geminiSearch) {
+        this.artistRepository = artistRepository;
+        this.geminiSearch = geminiSearch;
+    }
 
     public void registerArtist(){
         Artist artistRegister = new Artist();
@@ -26,25 +32,40 @@ public class ArtistService {
 
         System.out.println("Type the artist's birthday: (01/01/9999)");
         var artistBirthday = inputUser.nextLine();
-        var birthdayFormated = formatter.parse(artistBirthday);
-        LocalDate date = (LocalDate) birthdayFormated;
-        artistRegister.setBirthday(date);
+        try{
+            LocalDate date = LocalDate.parse(artistBirthday, formatter);
+            artistRegister.setBirthday(date);
+        } catch (RuntimeException e){
+            System.out.println("The date wrong type, please try again.");
+            return;
+        }
 
         System.out.println("Type the genre that this artist sings: ");
         var artistGenreSing = inputUser.nextLine();
-        GenreMusic genreMusic = GenreMusic.valueOf(artistGenreSing);
-        artistRegister.setGenreMusic(genreMusic);
+        try{
+            GenreMusic genreMusic = GenreMusic.fromString(artistGenreSing);
+            artistRegister.setGenreMusic(genreMusic);
+        } catch (RuntimeException e ){
+            System.out.println("Genre informed don't exist. Please try again.");
+            return;
+        }
 
         System.out.println("Type the type this artist: ");
         var artistType = inputUser.nextLine();
-        ArtistType artistTypeFormat = ArtistType.valueOf(artistType);
-        artistRegister.setTipoArtista(artistTypeFormat);
+        try{
+            ArtistType artistTypeFormat = ArtistType.fromString(artistType);
+            artistRegister.setTipoArtista(artistTypeFormat);
+        } catch (RuntimeException e){
+            System.out.println("Artist type informed don't exist, please try again.");
+            return;
+        }
 
         try{
-            artistRepository.save(artistRegister);
+            saveArtist(artistRegister);
             System.out.println("artist registe with sucess!");
         } catch (RuntimeException e){
-            System.out.println("It was not possible to save the artist in the database.");
+            System.out.println("It was not possible to save the artist in the database. Because: " + e.getMessage());
+            return;
         }
     }
 
@@ -71,8 +92,7 @@ public class ArtistService {
     public void searchArtistByBirthday(){
         System.out.println("Type the artist birthday for search: ");
         var artistBirthday = inputUser.nextLine();
-        LocalDate birthday = LocalDate.parse(artistBirthday);
-        birthday.format(formatter);
+        LocalDate birthday = LocalDate.parse(artistBirthday, formatter);
         try {
             var artist = artistRepository.searchArtistsByBirthday(birthday);
             System.out.println("Artist is found! Artist: " + artist);
@@ -92,8 +112,16 @@ public class ArtistService {
     public void gerarBioDoArtista() {
         System.out.println("Please type the artist name: ");
         var artistName = inputUser.nextLine();
-        OpenAiChatModel model = OpenAiChatModel.withApiKey("sk-proj-EDGVGvSaWUlRETGDJazSKJ2dYsqfIq912B7eLUUwrYk5Z3JG$5Z3JGsIDHGjrNR1q8MG3RbODa-YIqegT3BlbkFJFpPUSYrhfdhdlmMxfUvvm31OtHr1JqWcUdbHYO7$bHYO7YeeXa9K-xVJe6O--abfaKbfyYQ8O77wxDwA");
-        String resposta = model.generate("Faça uma biografia curta do artista: " + artistName);
-        System.out.println(resposta);
+        try{
+            var response = geminiSearch.obtainsInfo(artistName);
+            System.out.println(response);
+        } catch (RuntimeException e){
+            System.out.println("Error consult gemini: " + e.getMessage());
+            System.out.println("Please verify your connection or try again before");
+        }
+    }
+
+    public void saveArtist(Artist artist){
+        artistRepository.save(artist);
     }
 }
