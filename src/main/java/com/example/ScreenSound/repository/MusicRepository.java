@@ -1,0 +1,29 @@
+package com.example.ScreenSound.repository;
+
+import com.example.ScreenSound.model.Music;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface MusicRepository extends JpaRepository<Music, Long> {
+
+    @Query("select ALL(m) from Music m ")
+    List<Music> searchMusics();
+
+    @Query("select m from Music m where m.musicName like :musicName")
+    Optional<Music> searchMusicPerName(@Param("musicName") String musicName);
+
+    @Query("select m from Music m where m.genreMusic = :genre order by m.genreMusic")
+    List<Music> searchMusicsPerGenre(@Param("genre") String genre);
+
+    @Query("select m from Music m where m.musicDuration =:duration order by m.musicDuration desc ")
+    List<Music> searchMusicByDuration(int duration);
+
+    @Query("select m from Music m join Artist a where a.artistName like :artist")
+    List<Music> searchMusicByArtists(String artist);
+}
