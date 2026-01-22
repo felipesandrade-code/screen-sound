@@ -2,7 +2,6 @@ package com.example.ScreenSound.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
 
 @Entity
 @Table(name = "music")
@@ -15,9 +14,8 @@ public class Music {
 
     private double musicDuration;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(name = "musicsArtists", joinColumns = @JoinColumn(name = "music_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-    private List<Artist> artists;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private Artist artist;
 
     @Enumerated(value = EnumType.STRING)
     private GenreMusic genreMusic;
@@ -30,14 +28,12 @@ public class Music {
         this.musicName = musicName;
     }
 
-    public List<Artist> getArtists() {
-        return artists;
+    public Artist getArtist() {
+        return artist;
     }
-
-    public void setArtists(List<Artist> artists) {
-        this.artists = artists;
+    public void setArtist(Artist artist) {
+        this.artist = artist;
     }
-
     public long getId() {
         return id;
     }
@@ -56,5 +52,13 @@ public class Music {
 
     public void setGenreMusic(GenreMusic genreMusic) {
         this.genreMusic = genreMusic;
+    }
+
+    @Override
+    public String toString() {
+        return "\nmusicName = " + musicName  +
+                ", \nmusicDuration = " + musicDuration +
+                " seconds, \nartist = " + artist +
+                ", \ngenreMusic = " + genreMusic + "\n";
     }
 }

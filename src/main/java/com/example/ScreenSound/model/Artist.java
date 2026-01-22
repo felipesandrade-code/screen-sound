@@ -1,7 +1,6 @@
 package com.example.ScreenSound.model;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +17,7 @@ public class Artist {
 
     private LocalDate birthday;
 
-    @ManyToMany(mappedBy = "artists")
+    @OneToMany(mappedBy = "artist", fetch = FetchType.EAGER)
     private List<Music> musics;
 
     @Enumerated(value = EnumType.STRING)

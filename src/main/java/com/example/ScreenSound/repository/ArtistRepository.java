@@ -18,6 +18,6 @@ public interface ArtistRepository extends JpaRepository<Artist, Long> {
     Optional<Artist> searchArtistByName(@Param("name") String name);
     @Query("select a from Artist a where a.birthday = :date")
     List<Artist> searchArtistsByBirthday(@Param("date") LocalDate date);
-    @Query("select a from Music m JOIN m.artists a where m.musicName ilike %:music%")
+    @Query("select a from Music m JOIN m.artist a where m.musicName ilike %:music%")
     List<Artist> searchArtistsByMusic(String music);
 }

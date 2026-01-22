@@ -13,20 +13,15 @@ import java.util.Optional;
 
 @Repository
 public interface MusicRepository extends JpaRepository<Music, Long> {
-
-    @Query("select m from Music m join fetch m.artists")
+    @Query("select m from Music m join fetch m.artist")
     List<Music> searchMusics();
-
     @Query("select m from Music m where m.musicName like :musicName")
     Optional<Music> searchMusicPerName(@Param("musicName") String musicName);
-
-    @Query("select m from Music m where m.genreMusic = :genre order by m.genreMusic")
-    List<Music> searchMusicsPerGenre(@Param("genre") String genre);
-
+    @Query("select m from Music m where lower(m.genreMusic) like lower((concat('%', :genreMusic, '%')))")
+    List<Music> searchMusicsPerGenre(@Param("genreMusic") String genreMusic);
     @Query("select m from Music m where m.musicDuration =:duration order by m.musicDuration desc ")
     List<Music> searchMusicByDuration(int duration);
-
-    @Query("select m from Music m join fetch m.artists a where a.artistName ilike :artist")
+    @Query("select m from Music m join fetch m.artist a where a.artistName ilike :artist")
     List<Music> searchMusicByArtists(@Param("artist") String artist);
 
 }

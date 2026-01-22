@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Scanner;
 
 @Service
 public class ArtistService {
+    @Autowired
     private final ArtistRepository artistRepository;
     private final Scanner inputUser = new Scanner(System.in);
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -26,8 +26,8 @@ public class ArtistService {
 
     public void registerArtist(){
         Artist artistRegister = new Artist();
-        System.out.println("Please type the artist name: ");
-        var artistName = inputUser.nextLine();
+        System.out.println("Type the artist name: ");
+        var artistName = inputUser.nextLine().toLowerCase();
         artistRegister.setArtistName(artistName);
 
         System.out.println("Type the artist's birthday: (01/01/9999)");
@@ -41,7 +41,7 @@ public class ArtistService {
         }
 
         System.out.println("Type the genre that this artist sings: ");
-        var artistGenreSing = inputUser.nextLine();
+        var artistGenreSing = inputUser.nextLine().toLowerCase();
         try{
             GenreMusic genreMusic = GenreMusic.fromString(artistGenreSing);
             artistRegister.setGenreMusic(genreMusic);
@@ -65,21 +65,20 @@ public class ArtistService {
             System.out.println("artist registe with sucess!");
         } catch (RuntimeException e){
             System.out.println("It was not possible to save the artist in the database. Because: " + e.getMessage());
-            return;
         }
     }
 
     public void searchArtists(){
         var artists = artistRepository.searchArtists();
-        artists.forEach(a -> System.out.printf("Artist name: %s " +
+        artists.forEach(a -> System.out.printf("\nArtist name: %s " +
                 "\nArtistBirthday: %tF " +
                 "\nArtist musics: %s " +
-                "\nSung genre: %s", a.getArtistName(), a.getBirthday(), a.getMusics(),a.getGenreMusic()));
+                "\nSung genre: %s\n", a.getArtistName(), a.getBirthday(), a.getMusics().toString(),a.getGenreMusic()));
     }
 
     public void searchArtistByName(){
         System.out.println("Type the artist name for search: ");
-        var artistName = inputUser.nextLine();
+        var artistName = inputUser.nextLine().toLowerCase();
         var artistSearched = artistRepository.searchArtistByName(artistName);
         if (artistSearched.isPresent()){
             var artist = artistSearched.get();
@@ -103,13 +102,13 @@ public class ArtistService {
 
     public void searchArtistsByMusic(){
         System.out.println("Type the music for search: ");
-        var music = inputUser.nextLine();
+        var music = inputUser.nextLine().toLowerCase();
         var artistsSearched = artistRepository.searchArtistsByMusic(music);
-        artistsSearched.forEach(a -> System.out.printf("Artist name: %s" +
+        artistsSearched.forEach(a -> System.out.printf("\nArtist name: %s" +
                 "\nArtistBirthday: %tF \nSung genre: ", a.getArtistName(), a.getBirthday(), a.getGenreMusic()));
     }
 
-    public void gerarBioDoArtista() {
+    public void buildBioArtist() {
         System.out.println("Please type the artist name: ");
         var artistName = inputUser.nextLine();
         try{

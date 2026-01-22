@@ -1,11 +1,9 @@
 package com.example.ScreenSound;
 
-import com.example.ScreenSound.repository.ArtistRepository;
-import com.example.ScreenSound.repository.MusicRepository;
 import com.example.ScreenSound.service.ArtistService;
 import com.example.ScreenSound.service.GeminiSearch;
 import com.example.ScreenSound.service.MusicService;
-import jakarta.persistence.Column;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
@@ -13,7 +11,9 @@ import java.util.Scanner;
 @Component
 public class Principal {
     private Scanner inputScanner = new Scanner(System.in);
+    @Autowired
     private final ArtistService artistService;
+    @Autowired
     private final MusicService musicService;
     private GeminiSearch geminiSearch;
 
@@ -26,13 +26,15 @@ public class Principal {
         var menu = """
                 *** Screen Sound Musicas ***
                 
-                1 - Cadastrar artistas. 
-                2 - Cadastrar Músicas.
-                3 - Listar músicas.
-                4 - Buscar músicas por artistas. 
-                5 - Pesquisar dados sobre o artista.
-                
-                0 - sair  
+                1 - Register artists.
+                2 - Register Musics.
+                3 - List musics.
+                4 - List artists
+                5 - Search musics by artist.
+                6 - Search musics by genre.
+                7 - Search information about artist.
+              
+                0 - exit
                 """;
         int optionInput = -1;
 
@@ -50,10 +52,16 @@ public class Principal {
                     musicService.searchMusics();
                     break;
                 case 4:
-                    musicService.searchMusicByArtists();
+                    artistService.searchArtists();
                     break;
                 case 5:
-                    artistService.gerarBioDoArtista();
+                    musicService.searchMusicByArtists();
+                    break;
+                case 6:
+                    musicService.searchMusicPerGenre();
+                    break;
+                case 7:
+                    artistService.buildBioArtist();
                     break;
                 case 0:
                     System.out.println("Saindo....");
