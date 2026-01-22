@@ -26,13 +26,32 @@ Para instalar o Screen Sound, siga estas etapas:
 Linux e macOS:
 
 ```
-<comando_de_instalação>
+# Clonar o repositório
+git clone https://github.com/felipesandrade-code/screen-sound.git
+cd screen-sound
+
+# Dar permissão de execução ao Maven Wrapper
+chmod +x mvnw
+
+# Configurar chave de API do Gemini
+export API_KEY="sua_chave_aqui"
+
+# Instalar dependências e rodar
+./mvnw spring-boot:run
 ```
 
 Windows:
 
 ```
-<comando_de_instalação>
+# Clonar o repositório
+git clone https://github.com/felipesandrade-code/screen-sound.git
+cd screen-sound
+
+# Configurar chave de API do Gemini (Temporário na sessão atual)
+$env:API_KEY="sua_chave_aqui"
+
+# Instalar dependências e rodar
+./mvnw spring-boot:run
 ```
 
 ## ☕ Usando ScreenSound
